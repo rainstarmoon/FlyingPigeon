@@ -9,7 +9,7 @@ public class ThreadPoolUtil {
 
     public static volatile boolean server_running_flag = false;
 
-    public static final int THREAD_NUM = 256;
+    public static final int THREAD_NUM = 500;
 
     public static ExecutorService executor = Executors.newFixedThreadPool(THREAD_NUM);
 

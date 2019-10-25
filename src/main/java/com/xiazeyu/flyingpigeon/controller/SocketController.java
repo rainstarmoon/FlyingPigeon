@@ -6,14 +6,18 @@ import com.xiazeyu.flyingpigeon.socket.SocketClient;
 import com.xiazeyu.flyingpigeon.socket.SocketServer;
 import com.xiazeyu.flyingpigeon.util.NetUtil;
 import com.xiazeyu.flyingpigeon.util.ThreadPoolUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @RestController
 public class SocketController {
 
@@ -21,26 +25,31 @@ public class SocketController {
     private String port;
 
     @RequestMapping("/searchUsableNode")
-    public List<InternalNode> searchUsableNode() {
+    public Set<InternalNode> searchUsableNode() {
         if (ThreadPoolUtil.search_running_flag) {
             throw new RuntimeException("正在运行中，请稍后");
         }
         ThreadPoolUtil.search_running_flag = true;
-        List<InternalNode> result = new ArrayList<>();
+        Map<InternalNode, String> result = new ConcurrentHashMap<>();
         NetUtil netUtil = new NetUtil();
-        List<String> gateWays = netUtil.getGateWays();
-        for (String gateWay : gateWays) {
-            Map<String, String> ips = netUtil.getIps(gateWay);
-            for (String ip : ips.keySet()) {
-                System.out.println(ip);
+        Map<String, String> usableIps = netUtil.searchUsableIps();
+        final CountDownLatch latch = new CountDownLatch(usableIps.size());
+        for (String ip : usableIps.keySet()) {
+            ThreadPoolUtil.executor.execute(() -> {
                 SocketClient socketClient = new SocketClient(ip, Integer.valueOf(port), null, 1);
                 if (socketClient.deal(socketClient.new SocketClientHandler())) {
-                    result.add(new InternalNode(ip));
+                    result.put(new InternalNode(ip), "");
                 }
-            }
+                latch.countDown();
+            });
+        }
+        try {
+            latch.await(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
         }
         ThreadPoolUtil.search_running_flag = false;
-        return result;
+        return result.keySet();
     }
 
     @RequestMapping("/open")
@@ -60,5 +69,6 @@ public class SocketController {
         socketClient.deal(socketClient.new FileSocketClientHandler());
         return "over";
     }
+
 
 }

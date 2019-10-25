@@ -33,8 +33,8 @@ class FlyingPigeonApplicationTests {
         }
 
         long beg = System.currentTimeMillis();
-        List<InternalNode> internalNodes = controller.searchUsableNode();
-        System.out.println(internalNodes);
+        //List<InternalNode> internalNodes = controller.searchUsableNode();
+        //System.out.println(internalNodes);
         long end = System.currentTimeMillis();
         System.out.println("花费时间：" + (end - beg) / 1000 + "秒");
     }
