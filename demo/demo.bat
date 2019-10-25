@@ -1,0 +1,1 @@
+java -jar flying-pigeon-0.0.1-SNAPSHOT.jar

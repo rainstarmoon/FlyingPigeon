@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+</head>
+
+<script>
+
+    function searchUsableNode() {
+        $.ajax({
+            //请求方式
+            type: "post",
+            //请求的媒体类型
+            //contentType: "application/json;charset=UTF-8",
+            //请求地址
+            url: "/searchUsableNode",
+            //请求成功
+            success: function (result) {
+                var value = "<div>以下ip为可选ip：</div>";
+                for (var i = 0; i < result.length; i++) {
+                    value += "<div>" + result[i].ip + "</div>";
+                }
+                $("#ips").html(value);
+            },
+            //请求失败，包含具体的错误信息
+            error: function (e) {
+                console.log(e);
+                alert("请求错误");
+            }
+        })
+    }
+
+    function openSelf() {
+        var outPath = $("#out").val();
+        if (!outPath) {
+            return;
+        }
+        $.ajax({
+            //请求方式
+            type: "post",
+            //请求的媒体类型
+            //contentType: "application/json;charset=UTF-8",
+            //请求地址
+            url: "/open",
+            data: {
+                "outPath": outPath
+            },
+            //请求成功
+            success: function (result) {
+                alert(result);
+            },
+            //请求失败，包含具体的错误信息
+            error: function (e) {
+                console.log(e);
+                alert("请求错误");
+            }
+        })
+    }
+
+    function sendFile() {
+        var ip = $("#ip").val();
+        var inPath = $("#in").val();
+        if (!ip || !inPath) {
+            return;
+        }
+        $.ajax({
+            //请求方式
+            type: "post",
+            //请求的媒体类型
+            //contentType: "application/json;charset=UTF-8",
+            //请求地址
+            url: "/send",
+            data: {
+                "inPath": inPath,
+                "ip": ip
+            },
+            //请求成功
+            success: function (result) {
+                alert(result);
+            },
+            //请求失败，包含具体的错误信息
+            error: function (e) {
+                console.log(e);
+                alert("请求错误");
+            }
+        })
+    }
+
+
+</script>
+
+<body>
+<div>
+    <button id="searchUsableNode" onclick="searchUsableNode()">获取可用ip</button>
+    <div id="ips">
+
+    </div>
+</div>
+<br/>
+<div>
+    <button id="open" onclick="openSelf()">开启</button>
+    <br/>
+    <input type="text" id="out" placeholder="输出路径" style="width:50%"/>
+</div>
+<br/>
+<div>
+    <button id="send" onclick="sendFile()">发送</button>
+    <br/>
+    <input type="text" id="ip" placeholder="待传输ip地址" style="width:50%"/>
+    <br/>
+    <input type="text" id="in" placeholder="输入路径" style="width:50%"/>
+</div>
+
+</body>
+</html>
