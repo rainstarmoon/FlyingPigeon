@@ -81,8 +81,7 @@ public class SocketServer extends Thread {
                 socketServerHandler.setThreadId(id);
                 threadIdPool.put(id, "running");
             } catch (Exception e) {
-                //log.error(e.getMessage(), e);
-                log.error(e.getMessage());
+                log.debug(e.getMessage(), e);
                 if (threadIdPool.isEmpty()) {
                     break;
                 }
@@ -131,7 +130,7 @@ public class SocketServer extends Thread {
                     } while (len == bytes.length);
                     resultFlag = true;
                 } else {
-                    log.error("无法处理的信号，内容[{}]", firstSignal);
+                    log.info("无法处理的信号，内容[{}]", firstSignal);
                 }
             } catch (IOException e) {
                 throw e;
@@ -140,7 +139,7 @@ public class SocketServer extends Thread {
                     try {
                         fos.close();
                     } catch (IOException e) {
-                        log.error(e.getMessage(), e);
+                        log.debug(e.getMessage(), e);
                     }
                 }
             }

@@ -36,27 +36,27 @@ public abstract class BaseSocketHandler implements SocketHandler {
             output = new DataOutputStream(socket.getOutputStream());
             resultFlag = handler(input, output);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            log.debug(e.getMessage(), e);
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    log.error(e.getMessage(), e);
+                    log.debug(e.getMessage(), e);
                 }
             }
             if (output != null) {
                 try {
                     output.close();
                 } catch (IOException e) {
-                    log.error(e.getMessage(), e);
+                    log.debug(e.getMessage(), e);
                 }
             }
             if (socket != null) {
                 try {
                     socket.close();
                 } catch (Exception e) {
-                    log.error(e.getMessage());
+                    log.debug(e.getMessage());
                 }
             }
         }

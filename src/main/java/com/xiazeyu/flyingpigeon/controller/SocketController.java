@@ -26,6 +26,8 @@ public class SocketController {
 
     @RequestMapping("/searchUsableNode")
     public Set<InternalNode> searchUsableNode() {
+        log.info("收到请求 /searchUsableNode ");
+        long beg = System.currentTimeMillis();
         if (ThreadPoolUtil.search_running_flag) {
             throw new RuntimeException("正在运行中，请稍后");
         }
@@ -46,14 +48,17 @@ public class SocketController {
         try {
             latch.await(5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            log.error(e.getMessage());
+            log.debug(e.getMessage());
         }
         ThreadPoolUtil.search_running_flag = false;
+        long end = System.currentTimeMillis();
+        log.info("searchUsableNode一次执行时间；{}秒", (end - beg) / 1000);
         return result.keySet();
     }
 
     @RequestMapping("/open")
     public String openSelfNode(SocketParam param) {
+        log.info("收到请求 /open 参数为<{}>", param);
         if (!ThreadPoolUtil.server_running_flag) {
             ThreadPoolUtil.server_running_flag = true;
             new SocketServer(param.getOutPath(), Integer.valueOf(port)).start();
@@ -65,6 +70,7 @@ public class SocketController {
 
     @RequestMapping("/send")
     public String sendFileToNode(SocketParam param) {
+        log.info("收到请求 /send 参数为<{}>", param);
         SocketClient socketClient = new SocketClient(param.getIp(), Integer.valueOf(port), param.getInPath(), 10);
         socketClient.deal(socketClient.new FileSocketClientHandler());
         return "over";

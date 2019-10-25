@@ -63,13 +63,13 @@ public class SocketClient {
                 isNormal = socketHandler.execute();
                 break;
             } catch (Exception e) {
-                log.error(e.getMessage() + "-----客户端剩余重试次数" + connectionNum);
+                log.debug(e.getMessage() + "-----客户端剩余重试次数" + connectionNum);
             } finally {
                 if (socket != null) {
                     try {
                         socket.close();
                     } catch (IOException e) {
-                        log.error(e.getMessage());
+                        log.debug(e.getMessage());
                     }
                 }
             }

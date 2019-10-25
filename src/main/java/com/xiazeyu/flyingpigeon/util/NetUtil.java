@@ -123,7 +123,7 @@ public class NetUtil {
         try {
             latch.await(5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            log.error(e.getMessage());
+            log.debug(e.getMessage());
         }
         return ipMap;
     }
